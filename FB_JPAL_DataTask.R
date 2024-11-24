@@ -14,7 +14,8 @@ rm(list = objects())
 #  ----------- Uploading/cleaning BEA Data --------------####
 # Per capita personal income for 1943-1964 in dollars
 # cleaned to remove NA columns and irrelevant locations
-pcinc <- read_csv("Documents/R/MIT JPAL/ra_task_files/pcinc.csv")
+# set working directory before loading in data
+pcinc <- read_csv("input/pcinc.csv")
 area_filter <- c("United States", "District of Columbia", "Hawaii 3/", "Alaska",
                   "New England", "Mideast", "Great Lakes", "Plains", "Southeast",
                   "Southwest", "Rocky Mountain", "Far West 3/", "NA")
@@ -26,7 +27,7 @@ clean_pcinc <- pcinc %>%
 
 # Population for 1947-1964
 # cleaned to remove extraneous data
-pop <- read_csv("Documents/R/MIT JPAL/ra_task_files/pop.csv")
+pop <- read_csv("input/pop.csv")
 clean_pop <- pop %>%
   filter(!(AreaName %in% area_filter)) %>%
   select(!c("Population 1/ (number of persons)", "FIPS")) %>%
@@ -35,7 +36,7 @@ clean_pop <- pop %>%
 
 # Hill Burton Project Register (filtering for only relevant data)
 # cleaned to include variable and states of interest
-hbpr <- read_tsv("Documents/R/MIT JPAL/ra_task_files/hbpr.txt")
+hbpr <- read_tsv("input/hbpr.txt")
 
 included_locations <- hbpr %>%
   select(c(State)) %>%
@@ -138,8 +139,6 @@ final_data <- merged_hbpr %>%
   select(c(stateyear, predicted, hbfunds)) %>%
   na.omit(final_data)
 
-final_data$predicted <- format(final_data$predicted, scientific = FALSE)
-write.csv(final_data, "FB_StateYear_Panel_Data_Set.csv")
 
 # ------------  Q3. GRAPH AND TABLE FOR ASSESSING PREDICTOR RELEVANCE  -------- ####
 
@@ -152,7 +151,8 @@ ggplot(final_data, aes(predicted, hbfunds)) +
   geom_point() +
   geom_smooth(method = 'lm', se = TRUE) #includes regression line with standard error
 
-
+final_data$predicted <- format(final_data$predicted, scientific = FALSE)
+write.csv(final_data, "FB_StateYear_Panel_Data_Set.csv")
 
 
 
